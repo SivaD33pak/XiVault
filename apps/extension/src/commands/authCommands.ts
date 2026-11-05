@@ -8,10 +8,22 @@ export async function handleSignupFlow(
 ): Promise<void> {
   const username = await vscode.window.showInputBox({
     prompt: 'new username :',
-    placeHolder: 'Enter new username (3-32 characters)',
-    validateInput: (text) => {
-      if (!/^[a-z0-9_-]{3,32}$/.test(text)) {
-        return 'Username must be 3-32 characters: lowercase letters, digits, _ or -';
+    placeHolder: 'Enter new username',
+    validateInput: async (text) => {
+      const trimmed = text.trim();
+      if (!trimmed) {
+        return 'Username cannot be empty';
+      }
+      if (trimmed.length > 64) {
+        return 'Username must be 64 characters or fewer';
+      }
+      try {
+        const check = await apiClient.checkUsername(trimmed);
+        if (check.exists) {
+          return `Username "${trimmed}" already exists. Please choose another.`;
+        }
+      } catch {
+        return null;
       }
       return null;
     }

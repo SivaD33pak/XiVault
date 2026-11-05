@@ -59,10 +59,10 @@ async def test_register_success_and_duplicate() -> None:
 @pytest.mark.asyncio
 async def test_register_invalid_inputs() -> None:
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        # Invalid username pattern
+        # Empty username is rejected
         res = await ac.post(
             "/v1/auth/register",
-            json={"username": "Invalid Name!", "password": "supersecretpassword123"},
+            json={"username": "   ", "password": "supersecretpassword123"},
         )
         assert res.status_code == 422
 
@@ -72,6 +72,31 @@ async def test_register_invalid_inputs() -> None:
             json={"username": "valid_user", "password": "short"},
         )
         assert res2.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_check_username_endpoint() -> None:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        # Check non-existent username
+        res = await ac.get("/v1/auth/check-username", params={"username": "BrandNewUser123"})
+        assert res.status_code == 200
+        data = res.json()
+        assert data["exists"] is False
+        assert data["available"] is True
+
+        # Register user
+        reg_res = await ac.post(
+            "/v1/auth/register",
+            json={"username": "BrandNewUser123", "password": "password123456"},
+        )
+        assert reg_res.status_code == 201
+
+        # Check existing username (case-insensitive)
+        res_taken = await ac.get("/v1/auth/check-username", params={"username": "brandnewuser123"})
+        assert res_taken.status_code == 200
+        data_taken = res_taken.json()
+        assert data_taken["exists"] is True
+        assert data_taken["available"] is False
 
 
 @pytest.mark.asyncio

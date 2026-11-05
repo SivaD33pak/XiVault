@@ -7,6 +7,13 @@ from uuid import UUID
 from pydantic import BaseModel, field_validator
 
 
+class CheckUsernameResponse(BaseModel):
+    username: str
+    exists: bool
+    available: bool
+    message: str
+
+
 class RegisterRequest(BaseModel):
     username: str
     password: str
@@ -14,12 +21,12 @@ class RegisterRequest(BaseModel):
     @field_validator("username")
     @classmethod
     def validate_username(cls, v: str) -> str:
-        pattern = r"^[a-z0-9_-]{3,32}$"
-        if not re.match(pattern, v):
-            raise ValueError(
-                "Username must be 3-32 characters and only contain lowercase letters, numbers, _, -"
-            )
-        return v
+        trimmed = v.strip()
+        if not trimmed:
+            raise ValueError("Username cannot be empty.")
+        if len(trimmed) > 64:
+            raise ValueError("Username must be at most 64 characters long.")
+        return trimmed
 
     @field_validator("password")
     @classmethod

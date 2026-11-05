@@ -6,7 +6,7 @@ create extension if not exists pgcrypto;
 -- 1. Users table
 create table if not exists public.users (
   id uuid primary key default gen_random_uuid(),
-  username text not null unique check (username ~ '^[a-z0-9_-]{3,32}$'),
+  username text not null unique check (length(trim(username)) >= 1 and length(username) <= 64),
   password_hash text not null,
   created_at timestamptz not null default now(),
   disabled_at timestamptz

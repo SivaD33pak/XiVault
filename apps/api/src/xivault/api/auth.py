@@ -16,6 +16,7 @@ from xivault.exceptions import (
     RefreshTokenReuseException,
 )
 from xivault.schemas import (
+    CheckUsernameResponse,
     LoginRequest,
     LogoutRequest,
     QuotaPublic,
@@ -35,6 +36,49 @@ from xivault.services.security import (
 )
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+@router.get("/check-username", response_model=CheckUsernameResponse)
+async def check_username(
+    username: str,
+    request: Request,
+    repo: BaseRepository = Depends(get_repository),
+) -> Any:
+    """Check if a username is already taken or available."""
+    client_ip = get_client_ip(request)
+    rate_limiter.check(f"check_username:{client_ip}", max_requests=120, window_seconds=60)
+
+    trimmed = username.strip()
+    if not trimmed:
+        return CheckUsernameResponse(
+            username=username,
+            exists=False,
+            available=False,
+            message="Username cannot be empty.",
+        )
+    if len(trimmed) > 64:
+        return CheckUsernameResponse(
+            username=trimmed,
+            exists=False,
+            available=False,
+            message="Username must be 64 characters or fewer.",
+        )
+
+    existing = await repo.get_user_by_username(trimmed)
+    if existing:
+        return CheckUsernameResponse(
+            username=trimmed,
+            exists=True,
+            available=False,
+            message="Username is already taken.",
+        )
+
+    return CheckUsernameResponse(
+        username=trimmed,
+        exists=False,
+        available=True,
+        message="Username is available.",
+    )
 
 
 @router.post("/register", status_code=201, response_model=RegisterResponse)

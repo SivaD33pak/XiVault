@@ -122,6 +122,13 @@ export class ApiClient {
     }
   }
 
+  async checkUsername(username: string): Promise<{ username: string; exists: boolean; available: boolean; message: string }> {
+    return this.request<{ username: string; exists: boolean; available: boolean; message: string }>(
+      `/auth/check-username?username=${encodeURIComponent(username)}`,
+      { method: 'GET' }
+    );
+  }
+
   async register(username: string, password: string): Promise<QuotaInfo> {
     const res = await this.request<{ quota: QuotaInfo }>('/auth/register', {
       method: 'POST',
