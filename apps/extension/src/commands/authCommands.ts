@@ -46,52 +46,11 @@ export async function handleSignupFlow(
         treeProvider.refresh();
       }
     );
+    vscode.window.showInformationMessage(`XiVault: Account registered and logged in as ${username}.`);
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Registration failed';
     vscode.window.showErrorMessage(`XiVault: ${msg}`);
     return;
-  }
-
-  // Ask to upload the opened contents to storage
-  const activeEditor = vscode.window.activeTextEditor;
-  if (activeEditor && activeEditor.document.getText().trim().length > 0) {
-    const confirm = await vscode.window.showInformationMessage(
-      'Upload the opened contents to storage?',
-      { modal: true },
-      'Yes'
-    );
-
-    if (confirm === 'Yes') {
-      try {
-        const text = activeEditor.document.getText();
-        let displayPath = vscode.workspace.asRelativePath(activeEditor.document.uri, false).replace(/\\/g, '/');
-        if (!displayPath || activeEditor.document.isUntitled) {
-          const lang = activeEditor.document.languageId;
-          const ext = lang ? (lang === 'typescript' ? '.ts' : lang === 'python' ? '.py' : `.${lang}`) : '.txt';
-          displayPath = `snippet${ext}`;
-        }
-
-        const buffer = Buffer.from(text, 'utf-8');
-        await vscode.window.withProgress(
-          {
-            location: vscode.ProgressLocation.Notification,
-            title: `XiVault: Uploading ${displayPath}...`
-          },
-          async () => {
-            await apiClient.uploadFile(displayPath, buffer);
-            treeProvider.refresh();
-          }
-        );
-        vscode.window.showInformationMessage('Successfully stored');
-      } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : 'Upload failed';
-        vscode.window.showErrorMessage(`XiVault: ${msg}`);
-      }
-    }
-  } else {
-    vscode.window.showInformationMessage(
-      `XiVault: Account registered for ${username}. (Open a file to upload contents to storage)`
-    );
   }
 }
 
@@ -126,73 +85,11 @@ export async function handleLoginFlow(
         treeProvider.refresh();
       }
     );
+    vscode.window.showInformationMessage(`XiVault: Successfully logged in as ${username}.`);
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Login failed';
     vscode.window.showErrorMessage(`XiVault: ${msg}`);
     return;
-  }
-
-  // Ask to download stored code with Enter for yes, esc for no
-  const answer = await vscode.window.showInformationMessage(
-    'Download the stored code with Enter for yes esc for no',
-    { modal: true },
-    'Yes'
-  );
-
-  if (answer === 'Yes') {
-    try {
-      const files = await apiClient.listFiles();
-      if (files.length === 0) {
-        vscode.window.showInformationMessage('XiVault: Your vault is empty. No stored code to download.');
-        return;
-      }
-
-      let fileToDownload = files[0];
-      if (files.length > 1) {
-        const picked = await vscode.window.showQuickPick(
-          files.map((f) => ({
-            label: f.display_path,
-            description: `${(f.byte_size / 1024).toFixed(1)} KB • ${f.language}`,
-            file: f
-          })),
-          { placeHolder: 'Select stored code file to download and paste' }
-        );
-        if (!picked) {
-          return;
-        }
-        fileToDownload = picked.file;
-      }
-
-      const content = await apiClient.downloadFile(fileToDownload.id);
-
-      let applied = false;
-      const activeEditor = vscode.window.activeTextEditor;
-      if (activeEditor) {
-        // Attempt to paste into currently opened file
-        applied = await activeEditor.edit((editBuilder) => {
-          const doc = activeEditor.document;
-          const firstLine = doc.lineAt(0);
-          const lastLine = doc.lineAt(doc.lineCount - 1);
-          const fullRange = new vscode.Range(firstLine.range.start, lastLine.range.end);
-          editBuilder.replace(fullRange, content);
-        });
-      }
-
-      if (applied) {
-        vscode.window.showInformationMessage(`XiVault: Stored code "${fileToDownload.display_path}" successfully pasted into opened file.`);
-      } else {
-        // Fallback: Open a new text editor with the content if active editor is absent or refused edit
-        const doc = await vscode.workspace.openTextDocument({
-          content,
-          language: fileToDownload.language || 'plaintext'
-        });
-        await vscode.window.showTextDocument(doc);
-        vscode.window.showInformationMessage(`XiVault: Stored code "${fileToDownload.display_path}" opened in editor.`);
-      }
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Download failed';
-      vscode.window.showErrorMessage(`XiVault: ${msg}`);
-    }
   }
 }
 
