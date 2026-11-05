@@ -133,7 +133,7 @@
       "properties": {
         "xivault.apiBaseUrl": {
           "type": "string",
-          "default": "http://127.0.0.1:8000/v1",
+          "default": "https://xivault.onrender.com/v1",
           "description": "XiVault API Base URL"
         }
       }

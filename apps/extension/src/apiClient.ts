@@ -23,9 +23,13 @@ export class ApiClient {
 
   private getBaseUrl(): string {
     const config = vscode.workspace.getConfiguration('xivault');
-    let url = config.get<string>('apiBaseUrl', 'http://127.0.0.1:8000/v1');
-    if (url.endsWith('/')) {
+    let url = config.get<string>('apiBaseUrl', 'https://xivault.onrender.com/v1') || 'https://xivault.onrender.com/v1';
+    url = url.trim();
+    while (url.endsWith('/')) {
       url = url.slice(0, -1);
+    }
+    if (!url.endsWith('/v1')) {
+      url = `${url}/v1`;
     }
     return url;
   }
