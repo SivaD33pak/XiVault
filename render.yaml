@@ -12,6 +12,6 @@ services:
       - key: XIVAULT_JWT_SECRET
         generateValue: true
       - key: DATABASE_URL
-        sync: false
+        value: postgresql://xivault_admin.auvmwlaonidwsiszvrcj:XiVault_App_Pass_2026!@aws-0-ap-south-1.pooler.supabase.com:5432/postgres
       - key: SUPABASE_URL
         value: https://auvmwlaonidwsiszvrcj.supabase.co
