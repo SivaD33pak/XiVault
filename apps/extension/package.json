@@ -2,12 +2,12 @@
   "name": "xivault",
   "displayName": "XiVault",
   "description": "Private, secure cloud-backed source-code vault for authorized developers",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "SivaDeepak",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/xivault/xivault"
+    "url": "https://github.com/SivaD33pak/XiVault"
   },
   "engines": {
     "vscode": "^1.85.0"
