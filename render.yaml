@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: xivault-api
+    runtime: python
+    rootDir: apps/api
+    buildCommand: pip install -r requirements.txt && pip install -e .
+    startCommand: uvicorn xivault.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /healthz
+    envVars:
+      - key: XIVAULT_ENV
+        value: production
+      - key: XIVAULT_JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        value: https://auvmwlaonidwsiszvrcj.supabase.co
