@@ -43,8 +43,8 @@ async def test_register_success_and_duplicate() -> None:
         data = res.json()
         assert data["user"]["username"] == "alice_dev"
         assert data["quota"]["used_bytes"] == 0
-        assert data["quota"]["quota_bytes"] == 5242880
-        assert data["quota"]["remaining_bytes"] == 5242880
+        assert data["quota"]["quota_bytes"] == 15728640
+        assert data["quota"]["remaining_bytes"] == 15728640
         assert "password" not in str(data)
 
         # 2. Duplicate username returns 409
@@ -66,7 +66,7 @@ async def test_register_invalid_inputs() -> None:
         )
         assert res.status_code == 422
 
-        # Password too short (< 12 chars)
+        # Password too short (< 6 chars)
         res2 = await ac.post(
             "/v1/auth/register",
             json={"username": "valid_user", "password": "short"},

@@ -12,11 +12,11 @@ create table if not exists public.users (
   disabled_at timestamptz
 );
 
--- 2. User Quotas table (5 MiB total per user)
+-- 2. User Quotas table (15 MiB total per user)
 create table if not exists public.user_quotas (
   user_id uuid primary key references public.users(id) on delete cascade,
-  used_bytes bigint not null default 0 check (used_bytes >= 0 and used_bytes <= 5242880),
-  quota_bytes bigint not null default 5242880 check (quota_bytes = 5242880),
+  used_bytes bigint not null default 0 check (used_bytes >= 0 and used_bytes <= 15728640),
+  quota_bytes bigint not null default 15728640 check (quota_bytes = 15728640),
   updated_at timestamptz not null default now()
 );
 

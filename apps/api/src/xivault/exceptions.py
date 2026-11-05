@@ -89,7 +89,7 @@ class RateLimitedException(XiVaultAPIException):
 
 
 class QuotaExceededException(XiVaultAPIException):
-    def __init__(self, message: str = "Storage quota exceeded (5 MiB limit)."):
+    def __init__(self, message: str = "Storage quota exceeded (15 MiB limit)."):
         super().__init__(status_code=507, code="quota_exceeded", message=message)
 
 

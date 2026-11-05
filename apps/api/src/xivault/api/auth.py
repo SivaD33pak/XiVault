@@ -43,7 +43,7 @@ async def register(
     request: Request,
     repo: BaseRepository = Depends(get_repository),
 ) -> Any:
-    """Register a new developer account and initialize 5 MiB storage quota."""
+    """Register a new developer account and initialize 15 MiB storage quota."""
     client_ip = get_client_ip(request)
     rate_limiter.check(f"register:{client_ip}", max_requests=10, window_seconds=900)
 

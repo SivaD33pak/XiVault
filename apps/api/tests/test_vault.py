@@ -68,7 +68,7 @@ async def test_upload_and_quota_update() -> None:
         assert data["file"]["language"] == "python"
         assert data["file"]["byte_size"] == len(content)
         assert data["quota"]["used_bytes"] == len(content)
-        assert data["quota"]["remaining_bytes"] == 5242880 - len(content)
+        assert data["quota"]["remaining_bytes"] == 15728640 - len(content)
 
 
 @pytest.mark.asyncio

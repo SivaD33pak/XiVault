@@ -48,7 +48,7 @@ class PostgresRepository(BaseRepository):
                 user_id = user_row["id"]
                 quota_row = await conn.fetchrow(
                     "INSERT INTO public.user_quotas (user_id, used_bytes, quota_bytes) "
-                    "VALUES ($1, 0, 5242880) RETURNING used_bytes, quota_bytes",
+                    "VALUES ($1, 0, 15728640) RETURNING used_bytes, quota_bytes",
                     user_id,
                 )
                 user = dict(user_row)
@@ -66,7 +66,7 @@ class PostgresRepository(BaseRepository):
                 user_id,
             )
             if not row:
-                return {"used_bytes": 0, "quota_bytes": 5242880, "remaining_bytes": 5242880}
+                return {"used_bytes": 0, "quota_bytes": 15728640, "remaining_bytes": 15728640}
             return {
                 "used_bytes": row["used_bytes"],
                 "quota_bytes": row["quota_bytes"],
@@ -161,7 +161,7 @@ class PostgresRepository(BaseRepository):
                     user_id,
                 )
                 if not quota_row or (quota_row["used_bytes"] + byte_size) > quota_row["quota_bytes"]:
-                    raise QuotaExceededException("Uploading this file would exceed your 5 MiB storage quota.")
+                    raise QuotaExceededException("Uploading this file would exceed your 15 MiB storage quota.")
 
                 try:
                     file_row = await conn.fetchrow(

@@ -140,7 +140,7 @@ class InMemoryRepository(BaseRepository):
         quota: dict[str, Any] = {
             "user_id": user_id,
             "used_bytes": 0,
-            "quota_bytes": 5242880,
+            "quota_bytes": 15728640,
             "updated_at": now,
         }
         self.users[user_id] = user
@@ -156,7 +156,7 @@ class InMemoryRepository(BaseRepository):
     async def get_user_quota(self, user_id: UUID) -> dict[str, int]:
         q = self.quotas.get(user_id)
         if not q:
-            return {"used_bytes": 0, "quota_bytes": 5242880, "remaining_bytes": 5242880}
+            return {"used_bytes": 0, "quota_bytes": 15728640, "remaining_bytes": 15728640}
         used: int = q["used_bytes"]
         total: int = q["quota_bytes"]
         return {
@@ -241,7 +241,7 @@ class InMemoryRepository(BaseRepository):
         # Atomic quota check
         q = self.quotas.get(user_id)
         if not q or (q["used_bytes"] + byte_size) > q["quota_bytes"]:
-            raise QuotaExceededException("Uploading this file would exceed your 5 MiB storage quota.")
+            raise QuotaExceededException("Uploading this file would exceed your 15 MiB storage quota.")
 
         # Atomic duplicate check
         for ef in self.files.values():

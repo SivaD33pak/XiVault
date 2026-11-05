@@ -112,7 +112,7 @@ async def test_repository_atomic_duplicate_and_quota_enforcement() -> None:
             storage_key=f"{user_id}/file3",
             language="text",
             content_type="text/plain",
-            byte_size=6 * 1024 * 1024,  # 6 MiB > 5 MiB quota
+            byte_size=16 * 1024 * 1024,  # 16 MiB > 15 MiB quota
             sha256="hugehash",
             indexed_content="",
             file_content="",

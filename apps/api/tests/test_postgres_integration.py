@@ -35,7 +35,7 @@ async def test_postgres_repository_live_lifecycle() -> None:
         created_user_id = user["id"]
         assert user["username"] == username
         assert quota["used_bytes"] == 0
-        assert quota["quota_bytes"] == 5242880
+        assert quota["quota_bytes"] == 15728640
 
         # 2. Test commit_uploaded_file
         file_record = await repo.commit_uploaded_file(

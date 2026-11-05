@@ -24,8 +24,8 @@ export async function handleSignupFlow(
     prompt: 'new password:',
     password: true,
     validateInput: (text) => {
-      if (text.length < 12) {
-        return 'Password must be at least 12 characters';
+      if (text.length < 6) {
+        return 'Password must be at least 6 characters';
       }
       return null;
     }

@@ -24,8 +24,8 @@ class RegisterRequest(BaseModel):
     @field_validator("password")
     @classmethod
     def validate_password(cls, v: str) -> str:
-        if len(v) < 12:
-            raise ValueError("Password must be at least 12 characters long.")
+        if len(v) < 6:
+            raise ValueError("Password must be at least 6 characters long.")
         return v
 
 
@@ -50,7 +50,7 @@ class UserPublic(BaseModel):
 
 class QuotaPublic(BaseModel):
     used_bytes: int
-    quota_bytes: int = 5242880
+    quota_bytes: int = 15728640
     remaining_bytes: int
 
 
