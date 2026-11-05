@@ -1,0 +1,158 @@
+{
+  "name": "xivault",
+  "displayName": "XiVault",
+  "description": "Private, secure cloud-backed source-code vault for authorized developers",
+  "version": "0.1.0",
+  "publisher": "xivault",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xivault/xivault"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Programming Languages"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onView:xivault.vaultView"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "xivault-sidebar",
+          "title": "XiVault",
+          "icon": "$(lock)"
+        }
+      ]
+    },
+    "views": {
+      "xivault-sidebar": [
+        {
+          "id": "xivault.vaultView",
+          "name": "My Vault",
+          "type": "tree"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "xivault.startFlow",
+        "title": "XiVault: Login or Signup",
+        "category": "XiVault"
+      },
+      {
+        "command": "xivault.register",
+        "title": "XiVault: Register",
+        "category": "XiVault"
+      },
+      {
+        "command": "xivault.login",
+        "title": "XiVault: Log In",
+        "category": "XiVault"
+      },
+      {
+        "command": "xivault.uploadFile",
+        "title": "XiVault: Upload File",
+        "icon": "$(cloud-upload)",
+        "category": "XiVault"
+      },
+      {
+        "command": "xivault.refreshFiles",
+        "title": "XiVault: Refresh Files",
+        "icon": "$(refresh)",
+        "category": "XiVault"
+      },
+      {
+        "command": "xivault.searchFiles",
+        "title": "XiVault: Search Files",
+        "icon": "$(search)",
+        "category": "XiVault"
+      },
+      {
+        "command": "xivault.downloadFile",
+        "title": "XiVault: Download File",
+        "icon": "$(cloud-download)",
+        "category": "XiVault"
+      },
+      {
+        "command": "xivault.deleteFile",
+        "title": "XiVault: Delete File",
+        "icon": "$(trash)",
+        "category": "XiVault"
+      },
+      {
+        "command": "xivault.logout",
+        "title": "XiVault: Log Out",
+        "icon": "$(sign-out)",
+        "category": "XiVault"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "xivault.uploadFile",
+          "when": "view == xivault.vaultView",
+          "group": "navigation@1"
+        },
+        {
+          "command": "xivault.searchFiles",
+          "when": "view == xivault.vaultView",
+          "group": "navigation@2"
+        },
+        {
+          "command": "xivault.refreshFiles",
+          "when": "view == xivault.vaultView",
+          "group": "navigation@3"
+        },
+        {
+          "command": "xivault.logout",
+          "when": "view == xivault.vaultView",
+          "group": "navigation@4"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "xivault.downloadFile",
+          "when": "view == xivault.vaultView && viewItem == vaultFile",
+          "group": "inline@1"
+        },
+        {
+          "command": "xivault.deleteFile",
+          "when": "view == xivault.vaultView && viewItem == vaultFile",
+          "group": "inline@2"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "XiVault",
+      "properties": {
+        "xivault.apiBaseUrl": {
+          "type": "string",
+          "default": "http://127.0.0.1:8000/v1",
+          "description": "XiVault API Base URL"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "pretest": "npm run compile",
+    "test": "node --test out/test/*.test.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.5.0"
+  }
+}
